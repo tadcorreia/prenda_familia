@@ -979,16 +979,19 @@
       });
 
       // Copy link
-      $("#btnCopyLink").addEventListener("click", async ()=>{
-        const base = location.origin + location.pathname;
-        const link = `${base}?p=${encodeURIComponent(p.id)}`;
-        try{
-          await navigator.clipboard.writeText(link);
-          showToast("Link copiado ✅");
-        }catch(e){
-          showToast("Não deu para copiar (browser).");
-        }
-      });
+const copyBtn = $("#btnCopyLink");
+if (copyBtn) {
+  copyBtn.addEventListener("click", async ()=>{
+    const base = location.origin + location.pathname;
+    const link = `${base}?p=${encodeURIComponent(p.id)}`;
+    try{
+      await navigator.clipboard.writeText(link);
+      showToast("Link copiado ✅");
+    }catch(e){
+      showToast("Não deu para copiar (browser).");
+    }
+  });
+}
 
       wireSliders({ startedRef });
       updateProgress();
