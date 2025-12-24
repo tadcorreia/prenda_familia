@@ -633,106 +633,112 @@
       return bars;
     }
 
-    function passView(p){
-      const seed = p.id.length*1337 + (p.first?.length||0)*97 + (p.last?.length||0)*31;
-      const bars = makeBars(seed).map(b=>`
-        <div class="bar" style="height:${b.h}px;width:${b.w}px;opacity:${b.op}"></div>
-      `).join("");
+function passView(p){
+  const seed = p.id.length*1337 + (p.first?.length||0)*97 + (p.last?.length||0)*31;
+  const bars = makeBars(seed).map(b=>`
+    <div class="bar" style="height:${b.h}px;width:${b.w}px;opacity:${b.op}"></div>
+  `).join("");
 
-      const stops = TRIP.itinerary.map(s=>{
-        const url = TRIP.links[s.urlKey];
-        return `
-          <div class="stop lockedStep" data-key="${s.key}" data-url="${url}">
-            <div class="left">
-              <b>${s.title}</b>
-              <div class="t">${s.time}</div>
-              <div class="note">${s.note}</div>
-            </div>
-
-            <div class="openRow">
-              <div class="open">ABRIR ↗</div>
-              <button class="openBtnMini" data-open>ABRIR</button>
-            </div>
-
-            <div class="revealOverlay" data-reveal>
-              <div class="hintTxt">
-                <b>Cartão selado.</b><br/>
-                Carrega em <b>REVELAR</b> para desbloquear este passo.
-              </div>
-              <button class="revealBtn" data-reveal-btn>REVELAR</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      return `
-        <div class="head">
-          <div class="passenger">
-            <div class="label">Passenger</div>
-            <div class="name">${airlineName(p)}</div>
-            <div class="nick">${nickLine(p)}</div>
-          </div>
-
-          <div class="meta">
-            <div class="pill wait" id="statusPill">READY</div>
-            <div class="pill">FLIGHT ${TRIP.flight}</div>
-            <div class="pill">${TRIP.from}→${TRIP.to}</div>
-            <div class="pill">DATE ${TRIP.dateLabel}</div>
-          </div>
+  const stops = TRIP.itinerary.map(s=>{
+    const url = TRIP.links[s.urlKey];
+    return `
+      <div class="stop lockedStep" data-key="${s.key}" data-url="${url}">
+        <div class="left">
+          <b>${s.title}</b>
+          <div class="t">${s.time}</div>
+          <div class="note">${s.note}</div>
         </div>
 
-        <div class="body">
-          <div>
-            <div class="sectionTitle">
-              <b>🗺️ Flight plan (roteiro)</b>
-              <span>revela cada passo (1 a 1)</span>
-            </div>
-
-            <div class="progress">
-              <div class="barWrap"><div class="barFill" id="barFill"></div></div>
-              <div class="progTxt" id="progTxt">0/5</div>
-            </div>
-
-            <div class="itinerary" id="itinerary">${stops}</div>
-          </div>
-
-          <div class="side">
-            <div class="sectionTitle" style="margin-bottom:10px">
-              <b>Links rápidos</b>
-              <span>Belém</span>
-            </div>
-
-            <div class="miniRow">
-              <a class="linkBtn" target="_blank" rel="noopener" href="${TRIP.links.meet}">
-                <span class="ico">MAP</span> Encontro
-              </a>
-              <a class="linkBtn" target="_blank" rel="noopener" href="${TRIP.links.museum}">
-                <span class="ico">MAP</span> Museu
-              </a>
-              <a class="linkBtn" target="_blank" rel="noopener" href="${TRIP.links.tower}">
-                <span class="ico">MAP</span> Torre
-              </a>
-            </div>
-
-            <div class="checkin" id="checkinBox">
-              <div class="stamp">CHECKED-IN</div>
-
-              <div class="barcode" id="barcode">
-                <div class="scanLine"></div>
-                <div class="bars" aria-hidden="true">${bars}</div>
-                <div class="barcodeMeta">
-                  <span>${TRIP.flight} • ${TRIP.gate}</span>
-                  <span>${p.id.toUpperCase()}</span>
-                </div>
-              </div>
-
-              <button class="bigBtn" id="btnCheckIn">CHECK-IN (iniciar missão)</button>
-              <button class="smallBtn" id="btnCopyLink">Copiar link deste bilhete</button>
-            </div>
-          </div>
+        <div class="openRow">
+          <div class="open">ABRIR ↗</div>
+          <button class="openBtnMini" data-open>ABRIR</button>
         </div>
-      `;
-    }
+
+        <div class="revealOverlay" data-reveal>
+          <div class="hintTxt">
+            <b>Cartão selado.</b><br/>
+            Carrega em <b>REVELAR</b> para desbloquear este passo.
+          </div>
+          <button class="revealBtn" data-reveal-btn>REVELAR</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="head">
+      <div class="passenger">
+        <div class="label">Passenger</div>
+        <div class="name">${airlineName(p)}</div>
+        <div class="nick">${nickLine(p)}</div>
+      </div>
+
+      <div class="meta">
+        <div class="pill wait" id="statusPill">READY</div>
+        <div class="pill">FLIGHT ${TRIP.flight}</div>
+        <div class="pill">${TRIP.from}→${TRIP.to}</div>
+        <div class="pill">DATE ${TRIP.dateLabel}</div>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- ✅ COLUNA ESQUERDA: CHECK-IN PRIMEIRO -->
+      <div>
+        <div class="checkin" id="checkinBox">
+          <div class="stamp">CHECKED-IN</div>
+
+          <div class="barcode" id="barcode">
+            <div class="scanLine"></div>
+            <div class="bars" aria-hidden="true">${bars}</div>
+            <div class="barcodeMeta">
+              <span>${TRIP.flight} • ${TRIP.gate}</span>
+              <span>${p.id.toUpperCase()}</span>
+            </div>
+          </div>
+
+          <button class="bigBtn" id="btnCheckIn">CHECK-IN (iniciar missão)</button>
+          <button class="smallBtn" id="btnCopyLink">Copiar link deste bilhete</button>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <!-- (opcional) título simples para a lista -->
+        <div class="sectionTitle">
+          <b>🗺️ Roteiro</b>
+          <span>revela e abre cada passo</span>
+        </div>
+
+        <div class="progress">
+          <div class="barWrap"><div class="barFill" id="barFill"></div></div>
+          <div class="progTxt" id="progTxt">0/5</div>
+        </div>
+
+        <div class="itinerary" id="itinerary">${stops}</div>
+      </div>
+
+      <!-- ✅ COLUNA DIREITA: SÓ LINKS -->
+      <div class="side">
+        <div class="sectionTitle" style="margin-bottom:10px">
+          <b>Links rápidos</b>
+          <span>Belém</span>
+        </div>
+
+        <div class="miniRow">
+          <a class="linkBtn" target="_blank" rel="noopener" href="${TRIP.links.meet}">
+            <span class="ico">MAP</span> Encontro
+          </a>
+          <a class="linkBtn" target="_blank" rel="noopener" href="${TRIP.links.museum}">
+            <span class="ico">MAP</span> Museu
+          </a>
+          <a class="linkBtn" target="_blank" rel="noopener" href="${TRIP.links.tower}">
+            <span class="ico">MAP</span> Torre
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 
     function hubView(){
       const base = location.origin + location.pathname;
