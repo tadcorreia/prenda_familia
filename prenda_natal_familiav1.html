@@ -1228,7 +1228,7 @@ function showSplashThenRender(passenger){
   setTimeout(()=> {
     // só auto-procede se ainda estiver visível
     if(splash.classList.contains("show") && !btnOpen.disabled) proceed();
-  }, 1200);
+  }, 10000);
 }
 
 const passenger = getPassengerFromQuery();
