@@ -12,18 +12,8 @@
       --fg:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.62);
       --line:rgba(255,255,255,.14);
-
-      --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.10);
-
-      --a:#7C5CFF;   /* purple */
-      --b:#00E5FF;   /* cyan */
-      --c:#FF3D7F;   /* pink */
-      --ok:#33FF99;
-
+      --a:#7C5CFF; --b:#00E5FF; --c:#FF3D7F; --ok:#33FF99;
       --shadow: 0 24px 90px rgba(0,0,0,.55);
-      --r: 24px;
-
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
     }
@@ -39,26 +29,21 @@
         radial-gradient(900px 700px at 86% 30%, rgba(0,229,255,.14), transparent 55%),
         radial-gradient(900px 700px at 55% 95%, rgba(255,61,127,.10), transparent 55%),
         var(--bg);
-      overflow:hidden;
+      overflow:auto; /* ✅ permite scroll */
     }
 
-    /* animated mesh blobs */
+    /* blobs */
     .mesh{position:fixed; inset:-20%; filter: blur(60px); opacity:.65; pointer-events:none;}
-    .blob{
-      position:absolute; width:44vmax; height:44vmax; border-radius:999px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.20), transparent 55%),
-        linear-gradient(135deg, rgba(124,92,255,.35), rgba(0,229,255,.18), rgba(255,61,127,.20));
-      mix-blend-mode: screen;
-      animation: drift 16s ease-in-out infinite;
+    .blob{position:absolute; width:44vmax; height:44vmax; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.20), transparent 55%),
+                  linear-gradient(135deg, rgba(124,92,255,.35), rgba(0,229,255,.18), rgba(255,61,127,.20));
+      mix-blend-mode: screen; animation: drift 16s ease-in-out infinite;
     }
-    .blob:nth-child(2){
-      width:38vmax;height:38vmax; left:56%; top:10%;
+    .blob:nth-child(2){width:38vmax;height:38vmax; left:56%; top:10%;
       background: linear-gradient(135deg, rgba(0,229,255,.35), rgba(124,92,255,.16));
       animation-duration: 20s; opacity:.7;
     }
-    .blob:nth-child(3){
-      width:34vmax;height:34vmax; left:8%; top:58%;
+    .blob:nth-child(3){width:34vmax;height:34vmax; left:8%; top:58%;
       background: linear-gradient(135deg, rgba(255,61,127,.32), rgba(124,92,255,.14));
       animation-duration: 24s; opacity:.6;
     }
@@ -68,15 +53,21 @@
       100%{transform:translate3d(-4%,-2%,0) scale(1) rotate(0deg)}
     }
 
+    /* page wrap: desktop centra, mobile começa no topo */
     .wrap{
-      position:fixed; inset:0;
-      display:grid;
-      place-items:center;
+      min-height: 100dvh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       padding: 18px;
+      padding-bottom: calc(18px + env(safe-area-inset-bottom));
+    }
+    @media (max-width: 900px){
+      .wrap{align-items:flex-start; padding: 12px; padding-bottom: calc(12px + env(safe-area-inset-bottom));}
     }
 
     .card{
-      width: min(920px, 100%);
+      width: min(980px, 100%);
       border:1px solid rgba(255,255,255,.16);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
       border-radius: 28px;
@@ -87,21 +78,16 @@
     }
 
     .head{
-      padding: 16px 16px 12px;
+      padding: 14px 14px 12px;
       border-bottom: 1px solid rgba(255,255,255,.14);
       display:flex;
       align-items:flex-start;
       justify-content:space-between;
-      gap: 12px;
+      gap: 10px;
       flex-wrap:wrap;
     }
 
-    .passenger{
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      min-width: 260px;
-    }
+    .passenger{display:flex; flex-direction:column; gap:6px; min-width: 240px; max-width: 100%;}
     .passenger .label{
       font-family: var(--mono);
       font-size: 11px;
@@ -112,23 +98,29 @@
     .passenger .name{
       font-family: var(--mono);
       font-weight: 900;
-      letter-spacing: .14em;
-      font-size: 18px;
-      line-height: 1.1;
+      letter-spacing: .12em;
+      font-size: clamp(14px, 4.4vw, 18px);
+      line-height: 1.15;
       text-transform: uppercase;
+      overflow-wrap:anywhere; /* ✅ não corta no mobile */
+      word-break: break-word;
     }
-    .passenger .nick{
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: -2px;
-    }
+    .passenger .nick{color: var(--muted); font-size: 13px; margin-top:-2px}
 
     .meta{
-      display:flex;
-      gap: 8px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;
+      max-width:100%;
+    }
+    /* ✅ no mobile vira uma fila scrollável (para não cortar) */
+    @media (max-width: 520px){
+      .meta{
+        width:100%;
+        flex-wrap: nowrap;
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+      }
+      .meta::-webkit-scrollbar{display:none}
     }
 
     .pill{
@@ -141,15 +133,15 @@
       border:1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.05);
       white-space: nowrap;
+      flex: 0 0 auto;
     }
-
     .pill.ok{border-color: rgba(51,255,153,.26); color: rgba(51,255,153,.90)}
     .pill.wait{border-color: rgba(255,255,255,.18); color: rgba(255,255,255,.80)}
 
     .body{
-      padding: 14px 16px 16px;
+      padding: 14px;
       display:grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 340px;
       gap: 14px;
       align-items:start;
     }
@@ -157,12 +149,8 @@
       .body{grid-template-columns: 1fr}
     }
 
-    /* Flight plan list */
     .sectionTitle{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
       padding: 10px 12px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.12);
@@ -171,13 +159,39 @@
     .sectionTitle b{font-size: 14px}
     .sectionTitle span{color: var(--muted); font-size: 12.5px}
 
-    .itinerary{
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
+    /* progress */
+    .progress{
       margin-top: 10px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.10);
+      border-radius: 18px;
+      padding: 10px 12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .barWrap{
+      flex:1;
+      height: 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .barFill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(135deg, var(--a), var(--b));
+      border-radius: 999px;
+      transition: width .35s ease;
+    }
+    .progTxt{
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing:.14em;
+      color: rgba(255,255,255,.72);
+      white-space:nowrap;
     }
 
+    .itinerary{display:flex; flex-direction:column; gap: 10px; margin-top: 10px}
     .stop{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.04);
@@ -219,7 +233,46 @@
       padding-top: 2px;
     }
 
-    /* Right side (links + check-in) */
+    /* “locked until check-in” */
+    .locked .stop .note{
+      filter: blur(7px);
+      opacity: .55;
+      user-select:none;
+    }
+    .locked .stop .open{color: rgba(255,255,255,.55)}
+    .locked .stop::after{
+      content:"LOCKED";
+      position:absolute;
+      right: 14px; bottom: 12px;
+      font-family: var(--mono);
+      letter-spacing:.18em;
+      font-size: 10px;
+      color: rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      padding: 6px 8px;
+      border-radius: 999px;
+    }
+
+    /* completed */
+    .stop.done{
+      border-color: rgba(51,255,153,.22);
+      background: linear-gradient(135deg, rgba(51,255,153,.10), rgba(255,255,255,.04));
+    }
+    .stop.done .open{color: rgba(51,255,153,.90)}
+    .stop.done::after{
+      content:"✓";
+      position:absolute;
+      right: 14px; bottom: 10px;
+      width: 28px; height: 28px;
+      border-radius: 999px;
+      display:grid; place-items:center;
+      border:1px solid rgba(51,255,153,.26);
+      background: rgba(0,0,0,.18);
+      color: rgba(51,255,153,.90);
+      font-weight: 900;
+    }
+
     .side{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.12);
@@ -228,12 +281,7 @@
       overflow:hidden;
     }
 
-    .miniRow{
-      display:flex;
-      gap: 10px;
-      flex-wrap:wrap;
-      margin-top: 10px;
-    }
+    .miniRow{display:flex; gap: 10px; flex-wrap:wrap; margin-top: 10px}
     .linkBtn{
       display:inline-flex; align-items:center; gap:8px;
       text-decoration:none;
@@ -249,7 +297,6 @@
     .linkBtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07)}
     .ico{font-family:var(--mono); opacity:.85}
 
-    /* Big CHECK-IN block (at end) */
     .checkin{
       margin-top: 14px;
       border:1px solid rgba(255,255,255,.16);
@@ -271,20 +318,11 @@
       position:relative;
       overflow:hidden;
     }
-    .bars{
-      height: 54px;
-      display:flex;
-      gap: 2px;
-      align-items:flex-end;
-      opacity:.9;
-    }
+    .bars{height: 54px; display:flex; gap: 2px; align-items:flex-end; opacity:.9;}
     .bar{width:3px; background: rgba(255,255,255,.86); border-radius: 2px; opacity:.9;}
     .barcodeMeta{
       margin-top: 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       color: rgba(255,255,255,.78);
       font-family: var(--mono);
       font-size: 11px;
@@ -292,23 +330,16 @@
       text-transform: uppercase;
     }
     .scanLine{
-      position:absolute;
-      left:-20%;
-      width: 140%;
-      height: 3px;
-      top: -30px;
+      position:absolute; left:-20%;
+      width: 140%; height: 3px; top: -30px;
       background: linear-gradient(90deg, transparent, rgba(0,229,255,.75), rgba(255,255,255,.85), rgba(124,92,255,.75), transparent);
       opacity:0;
     }
-    .barcode.scanning .scanLine{
-      opacity:1;
-      animation: scan 1.05s cubic-bezier(.2,.8,.2,1) 1;
-    }
+    .barcode.scanning .scanLine{opacity:1; animation: scan 1.05s cubic-bezier(.2,.8,.2,1) 1;}
     @keyframes scan{ 0%{ top:-30px } 100%{ top: 95px } }
 
     .stamp{
-      position:absolute;
-      right: 14px; top: 14px;
+      position:absolute; right: 14px; top: 14px;
       transform: rotate(-10deg) scale(.92);
       border:2px solid rgba(51,255,153,.75);
       color: rgba(51,255,153,.90);
@@ -323,14 +354,8 @@
       pointer-events:none;
       box-shadow: 0 14px 40px rgba(51,255,153,.12);
     }
-    .checkin.checked .stamp{
-      opacity:1;
-      animation: pop .22s ease-out 1;
-    }
-    @keyframes pop{
-      0%{ transform: rotate(-10deg) scale(.7); opacity:.2}
-      100%{ transform: rotate(-10deg) scale(.92); opacity:1}
-    }
+    .checkin.checked .stamp{opacity:1; animation: pop .22s ease-out 1;}
+    @keyframes pop{ 0%{ transform: rotate(-10deg) scale(.7); opacity:.2} 100%{ transform: rotate(-10deg) scale(.92); opacity:1} }
 
     .bigBtn{
       width: 100%;
@@ -362,22 +387,12 @@
       font-weight: 900;
     }
 
-    /* HUB (lista de pessoas) */
-    .hub{
-      padding: 16px;
-    }
-    .hubTitle{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
-      margin-bottom: 14px;
-    }
+    /* HUB */
+    .hub{padding: 16px}
+    .hubTitle{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom: 14px}
     .hubTitle h1{margin:0; font-size:18px}
     .hubTitle p{margin:0; color:var(--muted); font-size:13px}
-
-    .gridHub{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
+    .gridHub{display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px}
     @media (max-width: 900px){ .gridHub{grid-template-columns: 1fr} }
 
     .personCard{
@@ -385,25 +400,11 @@
       background: rgba(0,0,0,.12);
       border-radius: 22px;
       padding: 12px;
-      display:flex;
-      flex-direction:column;
-      gap: 10px;
+      display:flex; flex-direction:column; gap: 10px;
     }
-    .personCard .top{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-    }
-    .personCard .nm{
-      font-weight: 950;
-      font-size: 14px;
-      line-height: 1.2;
-    }
-    .personCard .id{
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing:.14em;
-      color: rgba(255,255,255,.72);
-      text-transform: uppercase;
-    }
+    .personCard .top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+    .personCard .nm{font-weight: 950; font-size: 14px; line-height: 1.2}
+    .personCard .id{font-family: var(--mono); font-size: 11px; letter-spacing:.14em; color: rgba(255,255,255,.72); text-transform: uppercase}
     .rowBtns{display:flex; gap:10px; flex-wrap:wrap}
     .ghostBtn{
       flex:1 1 auto;
@@ -426,7 +427,6 @@
       font-weight: 950;
     }
 
-    /* toast */
     .toast{
       position:fixed;
       left:50%; transform: translateX(-50%);
@@ -445,18 +445,6 @@
       -webkit-backdrop-filter: blur(12px);
     }
     .toast.show{opacity:1; transform: translateX(-50%) translateY(-4px)}
-
-    /* Print: imprime só o modo PASS (se quiseres imprimir 1 bilhete) */
-    @media print{
-      body{overflow:visible; background:#fff; color:#111}
-      .mesh,.toast{display:none !important}
-      .wrap{position:static; padding:0}
-      .card{box-shadow:none; border:1px solid #ddd; background:#fff}
-      .pill,.sectionTitle,.stop,.side,.barcode{border-color:#ddd; background:#fff}
-      .bar{background:#111}
-      .barcodeMeta,.passenger .label{color:#111}
-      .bigBtn,.smallBtn{display:none !important}
-    }
   </style>
 </head>
 
@@ -468,7 +456,7 @@
   </div>
 
   <div class="wrap">
-    <div class="card" id="app"></div>
+    <div class="card locked" id="app"></div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -498,11 +486,11 @@
         spritz:"https://www.google.com/maps/search/?api=1&query=bar%20Bel%C3%A9m%20Lisboa%20spritz"
       },
       itinerary: [
-        { time:"11:00", title:"Encontro", note:"Ponto de encontro em Belém", urlKey:"meet" },
-        { time:"11:30", title:"Museu do Terramoto", note:"Entrada / experiência", urlKey:"museum" },
-        { time:"13:00", title:"Pastel de nata", note:"Pastéis de Belém (buff oficial)", urlKey:"nata" },
-        { time:"16:30", title:"Pôr-do-sol", note:"Torre de Belém + passeio", urlKey:"tower" },
-        { time:"17:00", title:"Spritz", note:"Recompensa final 🥂", urlKey:"spritz" },
+        { key:"meet",   time:"11:00", title:"Encontro",          note:"Ponto de encontro em Belém",              urlKey:"meet" },
+        { key:"museum", time:"11:30", title:"Museu do Terramoto",note:"Entrada / experiência",                  urlKey:"museum" },
+        { key:"nata",   time:"13:00", title:"Pastel de nata",    note:"Pastéis de Belém (buff oficial)",        urlKey:"nata" },
+        { key:"tower",  time:"16:30", title:"Pôr-do-sol",        note:"Torre de Belém + passeio",               urlKey:"tower" },
+        { key:"spritz", time:"17:00", title:"Spritz",            note:"Recompensa final 🥂",                     urlKey:"spritz" },
       ]
     };
     // =================
@@ -519,17 +507,12 @@
     }
 
     function airlineName(p){
-      // Estilo avião: TITLE LAST/FIRST
       const last = (p.last || "").toUpperCase();
       const first = (p.first || "").toUpperCase();
       const title = (p.title || "").toUpperCase();
       return `${title} ${last}/${first}`.trim();
     }
-
-    function nickLine(p){
-      if(!p.nick) return "";
-      return `“${p.nick}”`;
-    }
+    function nickLine(p){ return p.nick ? `“${p.nick}”` : ""; }
 
     function makeBars(seed){
       let x = seed;
@@ -553,13 +536,13 @@
       const stops = TRIP.itinerary.map(s=>{
         const url = TRIP.links[s.urlKey];
         return `
-          <div class="stop" data-url="${url}">
+          <div class="stop" data-key="${s.key}" data-url="${url}">
             <div class="left">
               <b>${s.title}</b>
               <div class="t">${s.time}</div>
-              <div class="note">${s.note}</div>
+              <div class="note" data-note>${s.note}</div>
             </div>
-            <div class="open">ABRIR ↗</div>
+            <div class="open" data-open>ABRIR ↗</div>
           </div>
         `;
       }).join("");
@@ -587,7 +570,12 @@
               <span>clica para abrir no Maps</span>
             </div>
 
-            <div class="itinerary">${stops}</div>
+            <div class="progress">
+              <div class="barWrap"><div class="barFill" id="barFill"></div></div>
+              <div class="progTxt" id="progTxt">0/5</div>
+            </div>
+
+            <div class="itinerary" id="itinerary">${stops}</div>
           </div>
 
           <div class="side">
@@ -609,7 +597,7 @@
             </div>
 
             <div class="checkin" id="checkinBox">
-              <div class="stamp" id="stamp">CHECKED-IN</div>
+              <div class="stamp">CHECKED-IN</div>
 
               <div class="barcode" id="barcode">
                 <div class="scanLine"></div>
@@ -620,7 +608,7 @@
                 </div>
               </div>
 
-              <button class="bigBtn" id="btnCheckIn">CHECK-IN</button>
+              <button class="bigBtn" id="btnCheckIn">CHECK-IN (desbloquear roteiro)</button>
               <button class="smallBtn" id="btnCopyLink">Copiar link deste bilhete</button>
             </div>
           </div>
@@ -629,7 +617,7 @@
     }
 
     function hubView(){
-      const base = location.origin + location.pathname; // URL atual sem query
+      const base = location.origin + location.pathname;
       const cards = PASSENGERS.map(p=>{
         const link = `${base}?p=${encodeURIComponent(p.id)}`;
         const pretty = `${p.first} ${p.nick ? `“${p.nick}” ` : ""}${p.last}`.trim();
@@ -655,7 +643,7 @@
           <div class="hubTitle">
             <div>
               <h1>📨 Links personalizados (um por pessoa)</h1>
-              <p>Abre um, copia o link e envia no WhatsApp. Cada link vai direto para o boarding pass dessa pessoa.</p>
+              <p>Abre um, copia o link e envia. Cada link vai direto para o bilhete dessa pessoa.</p>
             </div>
             <div class="pill">DATE ${TRIP.dateLabel}</div>
           </div>
@@ -672,24 +660,30 @@
       return PASSENGERS.find(x => x.id === id) || null;
     }
 
-    function wireCommon(){
-      // stop clicks
-      app.querySelectorAll(".stop").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const url = el.getAttribute("data-url");
-          window.open(url, "_blank", "noopener");
-        });
-      });
+    function updateProgress(){
+      const total = TRIP.itinerary.length;
+      const done = app.querySelectorAll(".stop.done").length;
+      const pct = Math.round((done/total)*100);
+      $("#barFill").style.width = pct + "%";
+      $("#progTxt").textContent = `${done}/${total}`;
+      if(done === total){
+        showToast("Roteiro completo ✅ (agora é só aparecer!)");
+      }
     }
 
     function wirePass(p){
+      let unlocked = false;
+
       const btn = $("#btnCheckIn");
       const barcode = $("#barcode");
       const box = $("#checkinBox");
       const pill = $("#statusPill");
 
+      // start locked
+      app.classList.add("locked");
+
       btn.addEventListener("click", ()=>{
-        if(box.classList.contains("checked")) return;
+        if(unlocked) return;
 
         barcode.classList.remove("scanning");
         void barcode.offsetWidth;
@@ -701,15 +695,37 @@
         pill.style.color = "rgba(0,229,255,.90)";
 
         setTimeout(()=>{
+          unlocked = true;
           box.classList.add("checked");
+          app.classList.remove("locked");
+
           pill.textContent = "CHECKED-IN";
           pill.classList.add("ok");
           pill.style.borderColor = "rgba(51,255,153,.26)";
           pill.style.color = "rgba(51,255,153,.90)";
+
           btn.disabled = true;
+          btn.textContent = "CHECK-IN FEITO ✅";
           try{ navigator.vibrate?.(18); }catch(e){}
-          showToast("Bilhete carimbado ✅");
+          showToast("Desbloqueado. Bora à missão 😄");
         }, 850);
+      });
+
+      // Stops
+      app.querySelectorAll(".stop").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          if(!unlocked){
+            showToast("Primeiro faz CHECK-IN para desbloquear 😉");
+            return;
+          }
+          // mark done
+          el.classList.add("done");
+          updateProgress();
+
+          // open maps
+          const url = el.getAttribute("data-url");
+          window.open(url, "_blank", "noopener");
+        });
       });
 
       $("#btnCopyLink").addEventListener("click", async ()=>{
@@ -722,18 +738,16 @@
           showToast("Não deu para copiar (browser).");
         }
       });
+
+      updateProgress();
     }
 
     function wireHub(){
       app.querySelectorAll("[data-copy]").forEach(btn=>{
         btn.addEventListener("click", async ()=>{
           const link = btn.getAttribute("data-copy");
-          try{
-            await navigator.clipboard.writeText(link);
-            showToast("Link copiado ✅");
-          }catch(e){
-            showToast("Não deu para copiar (browser).");
-          }
+          try{ await navigator.clipboard.writeText(link); showToast("Link copiado ✅"); }
+          catch(e){ showToast("Não deu para copiar (browser)."); }
         });
       });
       app.querySelectorAll("[data-open]").forEach(btn=>{
@@ -742,13 +756,14 @@
           window.open(link, "_blank", "noopener");
         });
       });
+      // no locked state in hub
+      app.classList.remove("locked");
     }
 
     // Render
     const passenger = getPassengerFromQuery();
     if(passenger){
       app.innerHTML = passView(passenger);
-      wireCommon();
       wirePass(passenger);
     }else{
       app.innerHTML = hubView();
